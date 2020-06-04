@@ -13,7 +13,7 @@ Let user to check one ore multiple items from list.
 
 Change this part of code to your needs:
 
-```
+```js
 // Welcome to the sample code: get data from sheet to HTML-form
 //
 //
