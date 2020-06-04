@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.css" />    
+    <?!= include('select-style'); ?>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <?!= include('select-script'); ?>
+  </head>
+  <body>
+  
+    <div id="loading"><p>Loading...</p></div>
+    <div class = 'buttons'><button type="button" onclick="submitSelection()">Submit</button></div>
+    <div id = "selected"></div>        
+        
+    <div id="dashboard_div">
+        <span id = "icon_search" class="glyphicon glyphicon-search"></span>    
+        <div id="string_filter_div"></div>        
+        <div id="table_div"></div>        
+    </div> 
+
+  </body>
+</html>

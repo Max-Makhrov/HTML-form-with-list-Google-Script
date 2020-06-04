@@ -1,0 +1,128 @@
+<script>
+// this function runs when user clicks "Submit" button
+function submitSelection()
+{
+  google.script.run.withSuccessHandler( /*google.script.host.close*/ ).responseToSelectForm(selected_items);
+}
+
+// library used:
+// https://developers.google.com/chart/interactive/docs/gallery/table
+//
+// Load the Visualization API and the controls package.
+google.charts.load('current', {'packages':['table', 'controls']}); 
+// Set a callback to run when the Google Visualization API is loaded.
+google.charts.setOnLoadCallback(prepareTableDrawing);
+
+// function to get data from sheet to load the table
+function prepareTableDrawing()
+{
+  google.script.run.withSuccessHandler(setCallback)
+      .getDataForCustomHtmlForm();
+}
+
+
+let selected_items = []; // global variable to keep selected items
+
+function setCallback(dataObject)
+{ 
+  // dataObject
+  // {
+    // dataRows: [[]]; // 2d single-column array with values. For HTML table with list of items
+    // header: 'Values' // custom header for list of values
+  // }
+  // make loading text invisible
+  var div = document.getElementById('loading');
+  div.style.display = 'none'; // hide 
+  // draw table with the data
+  drawTable(dataObject);
+}
+
+function drawTable(dataObject) {
+    var data = new google.visualization.DataTable();
+    var dataRows = []; // simgle column 2D-array
+    var listHeight = dataObject.listHeight || 300; // 300 is default
+    var values = dataObject.values;
+    // convert array to column
+    var val = '';
+    for (var i = 0; i < values.length; i++)
+    {
+      if (Array.isArray(values[i]))
+      {
+        for (var ii = 0; ii < values[i].length; ii++)
+        {
+          val = String(values[i][ii]);
+          if (val !== '') { dataRows.push([val]); }           
+        }    
+      }
+      else
+      {
+        val = String(values[i]);
+        if (val !== '') { dataRows.push([val]); }    
+      }
+    }
+    
+    data.addColumn('string', dataObject.header);
+    data.addRows(dataRows);
+
+    // Create a dashboard.
+    var dashboard = new google.visualization.Dashboard(
+        document.getElementById('dashboard_div'));
+
+    // create string filter
+    var stringFilter = new google.visualization.ControlWrapper({
+        controlType: 'StringFilter',
+        containerId: 'string_filter_div',
+        options: {
+            filterColumnIndex: 0,
+            ui: {label: '', labelSeparator: ':', cssClass: 'mySearchBoxLikeGoogle'},
+            matchType: 'any'
+        }
+    });    
+ 
+    // create table-holder
+    var table = new google.visualization.ChartWrapper({
+        chartType: 'Table',
+        containerId: 'table_div',
+        view: {'columns': [0]},
+        options: {
+            showRowNumber: false,
+            width: '295px',
+            height: listHeight,
+            cssClassNames: { 
+                headerRow: 'headerRow',
+                tableRow: 'tableRow',
+                oddTableRow: 'oddTableRow',
+                selectedTableRow: 'selectedTableRow',
+                // hoverTableRow: 'hoverTableRow',
+                headerCell: 'headerCell',
+                tableCell: 'tableCell',
+                rowNumberCell: 'rowNumberCell'
+                }            
+        }     
+    });
+    
+    // create listener to trigger `select` event
+    google.visualization.events.addListener(table, 'select', showSelection_);
+    // when item is selected    
+    function showSelection_(e)
+    {
+       var selection = table.getChart().getSelection();
+       var itemsSelected = [];
+       for (var i = 0; i < selection.length; i++)
+       {
+         // credits: https://github.com/google/google-visualization-issues/issues/1717
+         var indx = table.getDataTable().getUnderlyingTableRowIndex(selection[i].row);
+         var value = dataRows[indx][0];
+         itemsSelected.push(value);
+       }
+       var resultingDiv = document.getElementById('selected');
+       resultingDiv.innerText = itemsSelected.join(', ');
+       selected_items = itemsSelected; // save selected items
+    }
+
+    dashboard.bind([stringFilter], [table]);
+    dashboard.draw(data);
+
+}
+
+</script>
