@@ -17,7 +17,7 @@ Change this part of code to your needs:
 // Welcome to the sample code: get data from sheet to HTML-form
 //
 //
-// Modidicatin points are:
+// Modificatin points are:
 //
 // ==================================================================================================
 // [ 1 ]. onOpen function. Creates custom user menu.
