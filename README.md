@@ -73,3 +73,5 @@ function responseToSelectForm(selected_items)
  Browser.msgBox(prompt);
 }
 ```
+
+See [more info in the post](https://sheetswithmaxmakhrov.wordpress.com/2020/06/04/script-magic-create-html-form-with-list-from-sheet-search-like-google/).
